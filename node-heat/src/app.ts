@@ -1,8 +1,13 @@
 import "dotenv/config";
-import express, { response } from 'express';
+import express from 'express';
 
-// Constante para iniciar chamadas do express;
+import { router } from './routes'
+
+// Constante para iniciar chamadas do express
 const app = express();
+
+// Função para receber as rotas
+app.use(router);
 
 // Chamada get, para pode acessar a autenticação do github, utilizando o ID já salvo no arquivo .env
 app.get("/github", (request, response) => {

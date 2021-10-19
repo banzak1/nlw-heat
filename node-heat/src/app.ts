@@ -6,6 +6,10 @@ import { router } from './routes'
 // Constante para iniciar chamadas do express
 const app = express();
 
+// Função para receber função do tipo json
+app.use(express.json());
+
+
 // Função para receber as rotas
 app.use(router);
 

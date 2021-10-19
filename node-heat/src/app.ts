@@ -1,10 +1,26 @@
 import "dotenv/config";
 import express from 'express';
+import http from "http";
+import { Server } from 'socket.io';
+import cors from "cors";
 
 import { router } from './routes'
 
 // Constante para iniciar chamadas do express
 const app = express();
+app.use(cors());
+
+const serverHttp = http.createServer(app);
+
+const io = new Server(serverHttp, {
+    cors: {
+        origin: "*"
+    }
+});
+
+io.on("connect", socket => {
+    console.log(`Connected" ${socket.id}`);
+})
 
 // Função para receber função do tipo json
 app.use(express.json());
@@ -28,5 +44,5 @@ app.get("/signin/callback", (request, response) => {
 
 });
 
-// Execuetando servidor na rota 4000
-app.listen(4000, () => console.log('Listening on port 4000'));
+export { serverHttp, io };
+

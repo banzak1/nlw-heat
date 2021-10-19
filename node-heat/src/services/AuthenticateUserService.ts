@@ -1,5 +1,6 @@
 import axios from 'axios';
-
+import prismaClient from '../prisma';
+import { sign } from "jsonwebtoken"
 
 
 /**
@@ -47,7 +48,45 @@ class AuthenticateUserService {
             },
         });
 
-        return response.data;
+        // Desestruturando o conteudo do data
+        const { login, id, avatar_url, name } = response.data;
+
+        // Verificar no DB se o usuário ja existo
+        let user = await prismaClient.user.findFirst({
+            where: {
+                github_id: id
+            }
+        });
+
+        // Caso o usuário não exista, é criado no DB com as informações dele
+        if (!user) {
+            user = await prismaClient.user.create({
+                data: {
+                    github_id: id,
+                    login,
+                    avatar_url,
+                    name
+                }
+            })
+        }
+
+        // Criação do token e validação
+        const token = sign(
+            {
+                user: {
+                    name: user.name,
+                    avatar_url: user.avatar_url,
+                    id: user.id
+                }
+            },
+            process.env.JWT_SECRET,
+            {
+                subject: user.id,
+                expiresIn: "1d"
+            }
+        )
+
+        return { token, user };
     }
 
 }

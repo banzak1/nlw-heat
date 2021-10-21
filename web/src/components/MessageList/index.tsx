@@ -2,6 +2,8 @@ import styles from './styles.module.scss';
 
 import logoImg from '../../assets/logo.svg';
 
+import { api } from '../../services/api';
+
 export function MessageList() {
     return (
         <div className={styles.messageListWrapper}>
